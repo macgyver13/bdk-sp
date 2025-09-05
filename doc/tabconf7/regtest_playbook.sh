@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+
+########################### STAGE 1: setup ####################################
+
 # 1. Launch workshop environment.
 nix develop .
 # 2. Check bitcoind is running on regtest
@@ -9,6 +12,9 @@ regtest-bdk balance
 regtest-sp balance
 # 5. Synchronize bdk-cli wallet
 regtest-bdk sync
+
+########################## STAGE 2: initial funding ###########################
+
 # 6. Get a new address from bdk-cli wallet
 REGTEST_ADDRESS=$(regtest-bdk unused_address | jq -r '.address' | tr -d '\n')
 # 7. Mine a few more blocks to fund the wallet
@@ -17,6 +23,9 @@ just mine 101 $REGTEST_ADDRESS
 regtest-bdk sync
 # 9. Check balance
 regtest-bdk balance
+
+################ STAGE 3: creating silent payment outputs #####################
+
 # 10. Get a silent payment code from sp-cli2 wallet
 SP_CODE=$(regtest-sp code | jq -r '.silent_payment_code' | tr -d '\n')
 # 11. Create a transaction spending bdk-cli wallet UTXOs to a the previous silent payment code
@@ -30,12 +39,18 @@ TXID=$(regtest-bdk broadcast --tx $RAW_TX | jq -r '.txid' | tr -d '\n')
 just mine 1
 # 14. Once the new transaction has been mined, synchronize bdk-cli wallet again
 regtest-bdk sync
+
+################# STAGE 4: finding silent payment outputs #####################
+
 # 15. Now synchronize sp-cli2 wallet using RPC
 regtest-sp scan-rpc
 # 16. Check balance on sp-cli2 wallet
 regtest-sp balance
 # 17. Check balance on bdk-cli wallet
 regtest-bdk balance
+
+################ STAGE 5: creating silent payment outputs #####################
+
 # 18. Get a new address from bdk-cli wallet
 REGTEST_ADDRESS=$(regtest-bdk unused_address | jq -r '.address' | tr -d '\n')
 # 19. Create new transaction with sp-cli2 spending silent payment outputs
@@ -43,6 +58,9 @@ SP_TX=$(regtest-sp new-tx --to $REGTEST_ADDRESS:5000 --fee-rate 5 -- $(printf '%
 # Add a OP_RETURN if you want
 # OP_RETURN="Spending to silent payment UTXOs using BDK 🚀
 # SP_TX=$(regtest-sp new-tx --to $REGTEST_ADDRESS:5000 --data $OP_RETURN --fee_rate 5 | jq -r '.tx' | tr -d '\n')
+
+########### STAGE 6: verifying a silent payment change output #################
+
 # This transaction as it is created by a silent payment wallet should have
 # derived a silent payment output to receive the change back. That output is
 # derived from a labelled silent payment code with label 0, the default
@@ -57,6 +75,9 @@ if [[ $TX_OUTPUT_SPKS == *$EXPECTED_CHANGE_SPK* ]]; then
 else
   echo "Something went wrong...";
 fi
+
+############## STAGE 7: spending silent payment outputs #######################
+
 # 21. Broadcast transaction
 SP_TXID=$(regtest-cli sendrawtransaction $SP_TX | tr -d '\n')
 # 22. Mine a new block
