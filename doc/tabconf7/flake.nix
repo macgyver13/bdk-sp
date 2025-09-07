@@ -36,7 +36,7 @@
               then
                 if pkgs.stdenv.isAarch64
                 then "sha256-jvA498EVtaSB4ccC86n90BKWng0k3Q9wb0j60VWDdxc="
-                else "sha256-/VAsxyL0zWMPwjIJ/1vzibkmukmlTmU1TSdrdJhBaiE="
+                else "sha256-NEMcWCoDmd1C4Sdth9JTBsvd4CF/Z0S9VaKUWYZkXdo="
               else "sha256-poHk9s5STDOKEF8hRhNgW6xsM9WMMdxRNbvAK8RYu2w=";
           };
 
