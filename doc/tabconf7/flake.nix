@@ -61,6 +61,7 @@
             qrencode
             qrscan
             xclip
+            rust-script
             just
             presenterm
             bitcoind
