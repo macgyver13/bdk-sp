@@ -81,44 +81,44 @@
             mkdir -p $EXTRA_SCRIPTS
 
             cat > "$EXTRA_SCRIPTS/signet-cli" <<'EOF'
-            #!/usr/bin/env bash
-              bitcoin-cli --datadir=$BITCOIN_DATA_DIR --chain=signet $@
-            EOF
+#!/usr/bin/env bash
+bitcoin-cli --datadir=$BITCOIN_DATA_DIR --chain=signet $@
+EOF
 
             chmod +x "$EXTRA_SCRIPTS/signet-cli"
 
             cat > "$EXTRA_SCRIPTS/signet-bdk" <<'EOF'
-              #!/usr/bin/env bash
-              bdk-cli --datadir "$BDK_DATA_DIR" --network signet wallet -w signet -e "$EXT_DESCRIPTOR" -i "$INT_DESCRIPTOR" -c rpc -u http://localhost:38332/ "$BITCOIN_DATA_DIR/signet/.cookie" -d sqlite "$@"
-            EOF
+#!/usr/bin/env bash
+bdk-cli --datadir "$BDK_DATA_DIR" --network signet wallet -w signet -e "$EXT_DESCRIPTOR" -i "$INT_DESCRIPTOR" -c rpc -u http://localhost:38332/ "$BITCOIN_DATA_DIR/signet/.cookie" -d sqlite "$@"
+EOF
 
             chmod +x "$EXTRA_SCRIPTS/signet-bdk"
 
             cat > "$EXTRA_SCRIPTS/signet-sp" <<'EOF'
-              #!/usr/bin/env bash
-              sp-cli2 "$@"
-            EOF
+#!/usr/bin/env bash
+sp-cli2 "$@"
+EOF
 
             chmod +x "$EXTRA_SCRIPTS/signet-sp"
 
             cat > "$EXTRA_SCRIPTS/regtest-cli" <<'EOF'
-            #!/usr/bin/env bash
-              just cli "$@"
-            EOF
+#!/usr/bin/env bash
+just cli "$@"
+EOF
 
             chmod +x "$EXTRA_SCRIPTS/regtest-cli"
 
             cat > "$EXTRA_SCRIPTS/regtest-bdk" <<'EOF'
-              #!/usr/bin/env bash
-              just regtest-bdk "$@"
-            EOF
+#!/usr/bin/env bash
+just regtest-bdk "$@"
+EOF
 
             chmod +x "$EXTRA_SCRIPTS/regtest-bdk"
 
             cat > "$EXTRA_SCRIPTS/regtest-sp" <<'EOF'
-              #!/usr/bin/env bash
-              just regtest-sp "$@"
-            EOF
+#!/usr/bin/env bash
+just regtest-sp "$@"
+EOF
 
             chmod +x "$EXTRA_SCRIPTS/regtest-sp"
 
