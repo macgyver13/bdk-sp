@@ -28,7 +28,7 @@ signet-bdk sync
 
 # 11. Get a silent payment code from sp-cli2 wallet
 SP_CODE=$(signet-sp code | jq -r '.silent_payment_code' | tr -d '\n')
-# 12. Create a transaction spending bdk-cli wallet UTXOs to a the previous silent payment code
+# 12. Create a transaction spending bdk-cli wallet UTXOs to the previous silent payment code
 RAW_TX=$(signet-bdk create_sp_tx --to-sp $SP_CODE:10000 --fee_rate 5 | jq -r '.raw_tx' | tr -d '\n')
 # Add a OP_RETURN if you want
 # OP_RETURN="Spending to silent payment UTXOs using BDK 🚀
