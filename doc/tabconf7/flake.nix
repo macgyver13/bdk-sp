@@ -63,6 +63,7 @@
             xclip
             rust-script
             just
+            python311Packages.weasyprint
             presenterm
             bitcoind
             bdk-cli.packages.${system}.bdk-cli
