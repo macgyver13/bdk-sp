@@ -11,10 +11,12 @@ Each format has its own playbook, a shell script intended to be executed by copy
 - [`regtest_playbook.sh`](./regtest_playbook.sh)
 - [`non_nix_playbook.sh`](./non_nix_playbook.sh)
 
+There is also [`auto_playbook.sh`](./auto_playbook.sh), based on [`non_nix_playbook.sh`](./non_nix_playbook.sh), directed for users not familiar with the shell, that also want to participate of the workshop. It only requires for you to execute it and press enter as instructed by the script itself.
+
 `signet_playbook.sh` as well as `regtest_playbook.sh` require you to have `nix` on your PATH. The easiest way of installing it on your system is by following:
 [https://determinate.systems/nix-installer/](https://determinate.systems/nix-installer/)
 
-`non_nix_playbook.sh`, as its name implies, does not use `nix`, so you will need to install the dependencies of the workshop yourself. These dependencies are:
+`non_nix_playbook.sh`, as its name implies, does not use `nix`, so you will need to install the dependencies of the workshop yourself. [`auto_playbook.sh`](./auto_playbook.sh) users should also have these dependencies available, which are:
 - [Rust toolchain](https://rustup.rs/)
 - [just](https://just.systems/man/en/packages.html)
 - [podman](https://podman.io/docs/installation)
