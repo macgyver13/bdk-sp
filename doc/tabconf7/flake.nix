@@ -70,6 +70,8 @@
             sp-cli2.packages.${system}.sp-cli2
           ];
           shellHook = ''
+            export PS1="$ "
+
             export BITCOIN_DATA_DIR="$PWD/.bitcoin"
             mkdir -p "$BITCOIN_DATA_DIR"
 
