@@ -242,8 +242,8 @@ start STATE="persistent":
     max_parallel_requests = 4
     tweaks_only = 0
     tweaks_full_basic = 1
-    tweaks_full_with_dust_filter = 0
-    tweaks_cut_through_with_dust_filter = 0
+    tweaks_full_with_dust_filter = 1
+    tweaks_cut_through_with_dust_filter = 1
   EOF
 
   just podcmd "blindbit --datadir $BLINDBIT_DIR >> $BLINDBIT_LOG 2>&1 &"
