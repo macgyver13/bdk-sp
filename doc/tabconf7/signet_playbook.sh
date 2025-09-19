@@ -16,9 +16,9 @@ signet-bdk sync
 ########################## STAGE 2: initial funding ###########################
 
 # 6. Get a new address from bdk-cli wallet
-SIGNET_ADDRESS=$(signet-bdk unused_address | jq -r '.address' | tr -d '\n')
+SIGNET_ADDRESS=$(signet-bdk unused_address | jq -r '.address')
 # 7. Encode the address as a QR code
-echo $SIGNET_ADDRESS | qrencode -d 90 -t -utf8 -o -
+echo $SIGNET_ADDRESS | tr -d '\n' | qrencode -d 90 -t utf8 -o -
 # 8. Use `padawan` wallet, or whatever other signet wallet to fund the bdk-cli wallet
 # 9. Wait for the next block
 # 10. Once the new transaction has been mined, synchronize bdk-cli wallet again
@@ -42,7 +42,7 @@ signet-bdk sync
 ################# STAGE 4: finding silent payment outputs #####################
 
 # 16. Now synchronize sp-cli2 wallet usign compact block filter scanning
-signet-sp scan-cbf "https://silentpayments.dev/blindbit/"
+signet-sp scan-cbf "https://silentpayments.dev/blindbit/signet/"
 # 17. Check balance on sp-cli2 wallet
 signet-sp balance
 # 18. Check balance on bdk-cli wallet
@@ -53,7 +53,7 @@ signet-bdk balance
 # 19. Get a new address from bdk-cli wallet
 SIGNET_ADDRESS=$(signet-bdk unused_address | jq -r '.address' | tr -d '\n')
 # 20. Create new transaction with sp-cli2 spending silent payment outputs
-SP_TX=$(signet-sp new-tx --to $SIGNET_ADDRESS:5000 --fee-rate 5 | jq -r '.tx' | tr -d '\n')
+SP_TX=$(signet-sp new-tx --to $SIGNET_ADDRESS:4300 --fee-rate 3 -- $TR_XPRV | jq -r '.tx' | tr -d '\n')
 # Add a OP_RETURN if you want
 # OP_RETURN="Spending to silent payment UTXOs using BDK 🚀
 # SP_TX=$(signet-sp new-tx --to $SIGNET_ADDRESS:5000 --data $OP_RETURN --fee_rate 5 | jq -r '.tx' | tr -d '\n')
