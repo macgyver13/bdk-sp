@@ -127,48 +127,50 @@ execute_step 1 6 "Get a new address from bdk-cli wallet" \
 
 print_info "Retrieved address: $REGTEST_ADDRESS"
 
-execute_step 1 7 "Mine blocks to fund the wallet" "just mine 101 $REGTEST_ADDRESS"
+execute_step 1 7 "Mine one block to fund the wallet" "just mine 1 $REGTEST_ADDRESS"
 
-execute_step 1 8 "Synchronize bdk-cli wallet" "just regtest-bdk sync"
+execute_step 1 8 "Mine 100 more blocks to confirm the balance" "just mine 100"
 
-execute_step 1 9 "Check balance" "just regtest-bdk balance"
+execute_step 1 9 "Synchronize bdk-cli wallet" "just regtest-bdk sync"
 
-execute_step 2 10 "Get a silent payment code from sp-cli2 wallet" \
+execute_step 1 10 "Check balance" "just regtest-bdk balance"
+
+execute_step 2 11 "Get a silent payment code from sp-cli2 wallet" \
     "SP_CODE=\$(just regtest-sp code | jq -r '.silent_payment_code' | tr -d '\\n')"
 
 print_info "Retrieved SP code: $SP_CODE"
 
-execute_step 2 11 "Create transaction spending bdk-cli wallet UTXOs to silent payment" \
+execute_step 2 12 "Create transaction spending bdk-cli wallet UTXOs to silent payment" \
     "RAW_TX=\$(just regtest-bdk create_sp_tx --to-sp $SP_CODE:10000 --fee_rate 5 | jq -r '.raw_tx' | tr -d '\\n')"
 
 print_info "Created raw transaction"
 
-execute_step 2 12 "Broadcast transaction using bdk-cli wallet" \
+execute_step 2 13 "Broadcast transaction using bdk-cli wallet" \
     "TXID=\$(just regtest-bdk broadcast --tx $RAW_TX | jq -r '.txid' | tr -d '\\n')"
 
 print_info "Transaction ID: $TXID"
 
-execute_step 2 13 "Mine a new block" "just mine 1"
+execute_step 2 14 "Mine a new block" "just mine 1"
 
-execute_step 2 14 "Synchronize bdk-cli wallet again" "just regtest-bdk sync"
+execute_step 2 15 "Synchronize bdk-cli wallet again" "just regtest-bdk sync"
 
-execute_step 3 15 "Synchronize sp-cli2 wallet using RPC" "just regtest-sp scan-rpc"
+execute_step 3 16 "Synchronize sp-cli2 wallet using RPC" "just regtest-sp scan-rpc"
 
-execute_step 3 16 "Check balance on sp-cli2 wallet" "just regtest-sp balance"
+execute_step 3 17 "Check balance on sp-cli2 wallet" "just regtest-sp balance"
 
-execute_step 3 17 "Check balance on bdk-cli wallet" "just regtest-bdk balance"
+execute_step 3 18 "Check balance on bdk-cli wallet" "just regtest-bdk balance"
 
-execute_step 4 18 "Get a new address from bdk-cli wallet" \
+execute_step 4 19 "Get a new address from bdk-cli wallet" \
     "REGTEST_ADDRESS=\$(just regtest-bdk unused_address | jq -r '.address' | tr -d '\\n')"
 
 print_info "New address: $REGTEST_ADDRESS"
 
-execute_step 4 19 "Create new transaction with sp-cli2 spending silent payment outputs" \
+execute_step 4 20 "Create new transaction with sp-cli2 spending silent payment outputs" \
     "SP_TX=\$(just regtest-sp new-tx --to $REGTEST_ADDRESS:5000 --fee-rate 5 -- \$(printf '%q' \$(cat .regtest_tr_xprv)) | jq -r '.tx' | tr -d '\\n')"
 
 print_info "Created SP transaction"
 
-execute_step 5 20 "Verify the change output derivation" "
+execute_step 5 21 "Verify the change output derivation" "
   DERIVATION_ORDER=0;
   CHANGE_LABEL=0;
   EXPECTED_CHANGE_SPK=\$(just regtest-sp derive-sp-for-tx \$DERIVATION_ORDER --label \$CHANGE_LABEL --tx-hex $SP_TX | jq -r '.script_pubkey_hex' | tr -d '\\n');
@@ -180,20 +182,20 @@ execute_step 5 20 "Verify the change output derivation" "
   fi
 "
 
-execute_step 6 21 "Broadcast transaction" \
+execute_step 6 22 "Broadcast transaction" \
     "SP_TXID=\$(just cli sendrawtransaction $SP_TX | tr -d '\\n')"
 
 print_info "SP Transaction ID: $SP_TXID"
 
-execute_step 6 22 "Mine a new block" "just mine 1"
+execute_step 6 23 "Mine a new block" "just mine 1"
 
-execute_step 6 23 "Synchronize bdk-cli wallet" "just regtest-bdk sync"
+execute_step 6 24 "Synchronize bdk-cli wallet" "just regtest-bdk sync"
 
-execute_step 6 24 "Synchronize sp-cli2 wallet using RPC scanning" "just regtest-sp scan-rpc"
+execute_step 6 25 "Synchronize sp-cli2 wallet using RPC scanning" "just regtest-sp scan-rpc"
 
-execute_step 6 25 "Check bdk-cli wallet balance (should have 5000 sats more)" "just regtest-bdk balance"
+execute_step 6 26 "Check bdk-cli wallet balance (should have 5000 sats more)" "just regtest-bdk balance"
 
-execute_step 6 26 "Check sp-cli2 wallet balance (should have >5000 sats less)" "just regtest-sp balance"
+execute_step 6 27 "Check sp-cli2 wallet balance (should have >5000 sats less)" "just regtest-sp balance"
 
 echo
 print_success "Congratulations 🍻!"
