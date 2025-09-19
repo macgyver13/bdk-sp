@@ -140,7 +140,10 @@ EOF
             fi
 
             if [ ! -f ".tr_xprv" ]; then
-              sp-cli2 create --network signet --birthday $(bitcoin-cli --datadir=$BITCOIN_DATA_DIR --chain=signet getblockchaininfo | jq -r '.blocks') | jq -r '.tr_xprv' > ".tr_xprv"
+              BLOCKCHAININFO=$(bitcoin-cli --datadir=$BITCOIN_DATA_DIR --chain=signet getblockchaininfo)
+              HEIGHT=$(echo $BLOCKCHAININFO | jq -r '.blocks')
+              HASH=$(echo $BLOCKCHAININFO | jq -r '.bestblockhash')
+              sp-cli2 create --network signet --birthday-height $HEIGHT --birthday-hash $HASH | jq -r '.tr_xprv' > ".tr_xprv"
             fi
 
             # Start Regtest node on VM machine

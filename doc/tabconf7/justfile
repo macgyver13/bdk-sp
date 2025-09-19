@@ -412,7 +412,10 @@ _init_regtest_sp:
   #!/usr/bin/env bash
   if [ ! -f ".regtest_tr_xprv" ]; then
     rm -rf ".sp_cli2_regtest.db"
-    DB_PATH=".sp_cli2_regtest.db" sp-cli2 create --network regtest --birthday $(just cli getblockchaininfo | jq -r '.blocks') | jq -r '.tr_xprv' > ".regtest_tr_xprv"
+    BLOCKCHAININFO=$(bitcoin-cli --datadir=$BITCOIN_DATA_DIR --chain=signet getblockchaininfo)
+    HEIGHT=$(echo $BLOCKCHAININFO | jq -r '.blocks')
+    HASH=$(echo $BLOCKCHAININFO | jq -r '.bestblockhash')
+    DB_PATH=".sp_cli2_regtest.db" sp-cli2 create --network regtest --birthday-height $HEIGHT --birthday-hash $HASH | jq -r '.tr_xprv' > ".regtest_tr_xprv"
   fi
 
 init: (start "ephemeral") _init_regtest_bdk _init_regtest_sp
