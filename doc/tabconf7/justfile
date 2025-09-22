@@ -67,8 +67,7 @@ build TAG="1.0.0" VERSION="29.0" RELEASE="29.0" ARCH="x86_64-linux-gnu": machine
     # Build Esplora and Electrum services
     RUN mkdir -p /electrs
     WORKDIR /electrs
-    RUN git clone https://github.com/Blockstream/electrs.git .
-    RUN git checkout new-index
+    RUN git clone --branch new-index --depth 1 https://github.com/Blockstream/electrs.git .
     # Remove directories at the end to create smaller images
     RUN --mount=type=cache,target=$SCCACHE_DIR,sharing=locked cargo build --release --bin electrs
     RUN cp target/release/electrs /build
@@ -77,7 +76,7 @@ build TAG="1.0.0" VERSION="29.0" RELEASE="29.0" ARCH="x86_64-linux-gnu": machine
     # Build Fast Bitcoin Block Explorer
     RUN mkdir -p /fbbe
     WORKDIR /fbbe
-    RUN git clone https://github.com/RCasatta/fbbe .
+    RUN git clone --depth 1 https://github.com/RCasatta/fbbe .
     # Remove directories at the end to create smaller images
     RUN --mount=type=cache,target=$SCCACHE_DIR,sharing=locked cargo build --release --bin fbbe
     RUN cp target/release/fbbe /build
