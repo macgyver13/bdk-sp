@@ -92,9 +92,20 @@ build TAG="1.0.0" VERSION="29.0" RELEASE="29.0" ARCH="x86_64-linux-gnu": machine
     RUN go mod download
     RUN env CGO_ENABLED=0 go build -o /build/blindbit ./src
 
+    FROM eclipse-temurin:22.0.2_9-jdk AS java-builder
+    RUN apt-get update && apt-get install -y git rpm fakeroot
+    RUN mkdir -p /build/frigate
+    RUN mkdir -p /frigate
+    WORKDIR /frigate
+    RUN git clone --recursive --branch 1.0.0 --depth 1 https://github.com/sparrowwallet/frigate.git .
+    RUN ./gradlew jpackage
+    RUN cp -r ./build/jpackage/frigate /build/frigate
+    RUN rm -rf /frigate
+
     FROM debian:trixie-slim
-    RUN apt-get update && apt-get install -y libssl3
     ARG BITCOIN_VERSION=26.0
+    ENV PATH="$PATH:/opt/frigate/bin"
+    COPY --from=java-builder /build/frigate/ /opt/
     COPY --from=rust-builder /build/electrs /usr/local/bin
     COPY --from=rust-builder /build/fbbe /usr/local/bin
     COPY --from=go-builder build/blindbit /usr/local/bin
@@ -209,9 +220,11 @@ start STATE="persistent":
   fi
 
   BLINDBIT_DIR="$ENVDIR/blindbit"
+  FRIGATE_DIR="$ENVDIR/frigate"
 
   BITCOIND_LOG="$LOGDIR/bitcoin.log"
   BLINDBIT_LOG="$LOGDIR/blindbit.log"
+  FRIGATE_LOG="$LOGDIR/frigate.log"
   ESPLORA_LOG="$LOGDIR/esplora.log"
   FBBE_LOG="$LOGDIR/fbbe.log"
 
@@ -244,6 +257,21 @@ start STATE="persistent":
   EOF
 
   just podcmd "blindbit --datadir $BLINDBIT_DIR >> $BLINDBIT_LOG 2>&1 &"
+
+  just podcmd "mkdir -p $FRIGATE_DIR/regtest"
+  podman --connection sp_tabconf7 exec -i RegtestBitcoinEnv /bin/bash -c "cat > $FRIGATE_DIR/regtest/config" <<- EOF
+    {
+      "coreServer": "http://127.0.0.1:18443",
+      "coreAuthType": "COOKIE",
+      "coreDataDir": "$ENVDIR/regtest",
+      "coreAuth": "user:password",
+      "startIndexing": true,
+      "indexStartHeight": 0,
+      "scriptPubKeyCacheSize": 10000000
+    }
+  EOF
+
+  just podcmd "frigate --dir $FRIGATE_DIR --network regtest >> $FRIGATE_LOG 2>&1 &"
 
   just mine 1
 
@@ -314,6 +342,11 @@ explorerlogs:
 [doc("Print blindbit logs to console.")]
 blindbitlogs:
   just podcmd "tail -f $(just envpath)/log/blindbit.log"
+
+[group("Logs")]
+[doc("Print frigate logs to console.")]
+frigatelogs:
+  just podcmd "tail -f $(just envpath)/log/frigate.log"
 
 [group("Esplora")]
 [doc("Wait for esplora to update changes in blockchain")]
