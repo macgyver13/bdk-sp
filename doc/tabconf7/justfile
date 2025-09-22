@@ -434,8 +434,8 @@ _init_regtest_bdk:
     rm -rf {{bdk_data_dir}}/signet
     rm -rf {{bdk_data_dir}}/regtest
     XPRV=$(bdk-cli --datadir {{bdk_data_dir}} --network signet key generate | jq -r '.xprv')
-    echo "tr($XPRV/86h/1h/0h/0/*)" >  "{{bdk_data_dir}}/.external_descriptor"
-    echo "tr($XPRV/86h/1h/0h/1/*)" >  "{{bdk_data_dir}}/.internal_descriptor"
+    echo "tr($XPRV/86h/1h/0h/0/*)" > "{{bdk_data_dir}}/.external_descriptor"
+    echo "tr($XPRV/86h/1h/0h/1/*)" > "{{bdk_data_dir}}/.internal_descriptor"
   fi
 
 _init_regtest_sp:
