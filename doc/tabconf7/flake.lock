@@ -234,11 +234,11 @@
         "nixpkgs": "nixpkgs_4"
       },
       "locked": {
-        "lastModified": 1756906685,
-        "narHash": "sha256-SkWnJaJ+q0tC08n4Py4gYhmEVGE3/OoRJiAc5JSAJYE=",
+        "lastModified": 1758281895,
+        "narHash": "sha256-bGnen3kO+lZA9igM5OoetTABL5DgRXIPCsxOUX+EAd0=",
         "owner": "nymius",
         "repo": "bdk-sp",
-        "rev": "112edfc12036014c4aba19c3f868a249ee4592a2",
+        "rev": "1e514a7ec6561115478c0f6c76b9febe0013178c",
         "type": "github"
       },
       "original": {
