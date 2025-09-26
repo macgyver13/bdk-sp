@@ -1,6 +1,7 @@
 set quiet
 
 bdk_data_dir := env('BDK_DATA_DIR', '.bdk')
+target_arch := `if [[ "$(uname -s)" == "Darwin" && "$(uname -m)" == "arm64" ]]; then echo "aarch64-linux-gnu"; else echo "x86_64-linux-gnu"; fi`
 
 [doc("List all available commands.")]
 default:
@@ -24,7 +25,7 @@ machine FORCE="false":
 
 [group("Podman")]
 [doc("Build test node images.")]
-build TAG="1.0.0" VERSION="29.0" RELEASE="29.0" ARCH="x86_64-linux-gnu": machine
+build TAG="1.0.0" VERSION="29.0" RELEASE="29.0" ARCH=target_arch: machine
   #!/usr/bin/env bash
   # Create virtual Containerfile by storing content in file descriptor 3
   exec 3<<- "EOF"
