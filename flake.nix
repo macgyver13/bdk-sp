@@ -2,7 +2,7 @@
   description = "Dev environment for bdk_sp workspace";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
     rust-overlay = {
       url = "github:oxalica/rust-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -28,11 +28,16 @@
         formatter = pkgs.alejandra;
 
         packages = {
-          sp-cli2 = pkgs.rustPlatform.buildRustPackage {
+          sp-cli2 = (pkgs.makeRustPlatform {
+            cargo = rustVersion;
+            rustc = rustVersion;
+          }).buildRustPackage {
             pname = "sp-cli2";
             version = "0.1.0";
 
             src = ./.;
+            # Disable cargo-auditable which doesn't support edition 2024
+            auditable = false;
             cargoLock = {
               lockFile = ./Cargo.lock;
               outputHashes = {

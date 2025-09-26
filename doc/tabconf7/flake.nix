@@ -2,9 +2,9 @@
   description = "BDK Silent Payments Workshop Environment";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
     flake-utils.url = "github:numtide/flake-utils";
-    sp-cli2.url = "github:nymius/bdk-sp/feat/nix-env";
+    sp-cli2.url = "path:../..";
     bdk-cli.url = "github:nymius/bdk-cli/feat/nix-env";
   };
   outputs = {
@@ -35,7 +35,7 @@
               if pkgs.stdenv.isDarwin
               then
                 if pkgs.stdenv.isAarch64
-                then "sha256-jvA498EVtaSB4ccC86n90BKWng0k3Q9wb0j60VWDdxc="
+                then "sha256-NEMcWCoDmd1C4Sdth9JTBsvd4CF/Z0S9VaKUWYZkXdo="
                 else "sha256-NEMcWCoDmd1C4Sdth9JTBsvd4CF/Z0S9VaKUWYZkXdo="
               else "sha256-poHk9s5STDOKEF8hRhNgW6xsM9WMMdxRNbvAK8RYu2w=";
           };
@@ -57,14 +57,14 @@
           packages = with pkgs; [
             jq
             podman
-            virtiofsd
-            qrencode
-            qrscan
-            xclip
+            #virtiofsd
+            #qrencode
+            #qrscan
+            #xclip
             rust-script
             just
-            python311Packages.weasyprint
-            presenterm
+            #python311Packages.weasyprint
+            #presenterm
             bitcoind
             bdk-cli.packages.${system}.bdk-cli
             sp-cli2.packages.${system}.sp-cli2

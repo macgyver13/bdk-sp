@@ -17,7 +17,7 @@ machine FORCE="false":
   elif [ "$machine_created" = "true" ]; then
     echo "Machine already created."
   else
-    podman machine init --cpus 4 --memory 4096 --disk-size 20 sp_tabconf7
+    podman machine init --cpus 4 --memory 4096 --disk-size 30 sp_tabconf7
   fi
 
   just startvm
@@ -287,7 +287,6 @@ sendminingrewardto ADDRESS:
 
 [group("Bitcoin Core")]
 [doc("Send a command to bitcoin-cli")]
-[positional-arguments]
 cli COMMAND *ARGS:
   #!/usr/bin/env bash
   touch /tmp/empty.conf
@@ -378,7 +377,6 @@ sendto ADDRESS:
 
 [group("Silent payment wallet")]
 [doc("Send a command to sp-cli2 on regtest")]
-[positional-arguments]
 regtest-sp COMMAND *ARGS:
   #!/usr/bin/env bash
   export DB_PATH=".sp_cli2_regtest.db"
@@ -389,7 +387,6 @@ regtest-sp COMMAND *ARGS:
 
 [group("Silent payment wallet")]
 [doc("Send a command to sp-cli2 on regtest")]
-[positional-arguments]
 regtest-bdk COMMAND *ARGS:
   #!/usr/bin/env bash
   export EXT_DESCRIPTOR=$(cat "{{bdk_data_dir}}/.external_descriptor")
