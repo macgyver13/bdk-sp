@@ -6,6 +6,34 @@ bdk_data_dir := env('BDK_DATA_DIR', '.bdk')
 default:
   just --list --unsorted
 
+[group("Workshop")]
+[doc("Launch ephemeral environment without checking dependencies")]
+init: (start "ephemeral") _init_regtest_bdk _init_regtest_sp
+
+[group("Workshop")]
+[doc("Ensure dependencies are installed and launch environment")]
+non_nix_init: _local_install init
+
+[group("Silent payment wallet")]
+[doc("Send a command to sp-cli2 on regtest")]
+[positional-arguments]
+regtest-sp COMMAND *ARGS:
+  #!/usr/bin/env bash
+  export DB_PATH=".sp_cli2_regtest.db"
+  export RPC_PASS=$(just cookie)
+  export RPC_USER="__cookie__"
+  export RPC_URL="http://127.0.0.1:18443"
+  sp-cli2 {{COMMAND}} {{ARGS}}
+
+[group("BDK wallet")]
+[doc("Send a command to bdk-cli on regtest")]
+[positional-arguments]
+regtest-bdk COMMAND *ARGS:
+  #!/usr/bin/env bash
+  export EXT_DESCRIPTOR=$(cat "{{bdk_data_dir}}/.external_descriptor")
+  export INT_DESCRIPTOR=$(cat "{{bdk_data_dir}}/.internal_descriptor")
+  bdk-cli --datadir "{{bdk_data_dir}}" --network regtest wallet -w regtest -e "$EXT_DESCRIPTOR" -i "$INT_DESCRIPTOR" -c rpc -u http://localhost:18443/ $(just local_cookie_path) -d sqlite {{COMMAND}} {{ARGS}}
+
 [group("Podman")]
 [doc("Set up VM to run containers.")]
 machine FORCE="false":
@@ -165,10 +193,10 @@ startcontainer: (create "false" "1.0.0")
   fi
   podman --connection sp_tabconf7 start RegtestBitcoinEnv
 
-clean_regtest_bdk:
+_clean_regtest_bdk:
   rm -rf {{bdk_data_dir}}/regtest
 
-clean_regtest_sp:
+_clean_regtest_sp:
   #!/usr/bin/env bash
   rm -rf ".regtest_tr_xprv"
   rm -rf ".sp_cli2_regtest.db"
@@ -192,8 +220,8 @@ stop:
     just cli stop
     if just podcmd '[ -d /tmp/testenv ]'; then
       just podcmd "rm -rf /tmp/testenv"
-      just clean_regtest_sp
-      just clean_regtest_bdk
+      just _clean_regtest_sp
+      just _clean_regtest_bdk
     fi
     podman --connection sp_tabconf7 stop RegtestBitcoinEnv
   fi
@@ -406,27 +434,6 @@ walletbalance:
 sendto ADDRESS:
   just cli -rpcwallet=podmanwallet sendtoaddress {{ADDRESS}} 1
 
-[group("Silent payment wallet")]
-[doc("Send a command to sp-cli2 on regtest")]
-[positional-arguments]
-regtest-sp COMMAND *ARGS:
-  #!/usr/bin/env bash
-  export DB_PATH=".sp_cli2_regtest.db"
-  export RPC_PASS=$(just cookie)
-  export RPC_USER="__cookie__"
-  export RPC_URL="http://127.0.0.1:18443"
-  sp-cli2 {{COMMAND}} {{ARGS}}
-
-[group("Silent payment wallet")]
-[doc("Send a command to sp-cli2 on regtest")]
-[positional-arguments]
-regtest-bdk COMMAND *ARGS:
-  #!/usr/bin/env bash
-  export EXT_DESCRIPTOR=$(cat "{{bdk_data_dir}}/.external_descriptor")
-  export INT_DESCRIPTOR=$(cat "{{bdk_data_dir}}/.internal_descriptor")
-  bdk-cli --datadir "{{bdk_data_dir}}" --network regtest wallet -w regtest -e "$EXT_DESCRIPTOR" -i "$INT_DESCRIPTOR" -c rpc -u http://localhost:18443/ $(just local_cookie_path) -d sqlite {{COMMAND}} {{ARGS}}
-
-
 _init_regtest_bdk:
   #!/usr/bin/env bash
   mkdir -p {{bdk_data_dir}}
@@ -448,11 +455,8 @@ _init_regtest_sp:
     DB_PATH=".sp_cli2_regtest.db" sp-cli2 create --network regtest --birthday-height $HEIGHT --birthday-hash $HASH | jq -r '.tr_xprv' > ".regtest_tr_xprv"
   fi
 
-init: (start "ephemeral") _init_regtest_bdk _init_regtest_sp
-
 _local_install:
   #!/usr/bin/env bash
   cargo install --git https://github.com/nymius/bdk-cli bdk-cli --branch feat/nix-env --all-features
   cargo install --git https://github.com/nymius/bdk-sp bdk_sp_cli_v2 --branch feat/nix-env --all-features
 
-non_nix_init: _local_install init
