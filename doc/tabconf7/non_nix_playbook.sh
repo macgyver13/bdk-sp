@@ -86,7 +86,7 @@ SP_TXID=$(just cli sendrawtransaction $SP_TX | tr -d '\n')
 just mine 1
 # 24. Once the new transaction has been mined, synchronize bdk-cli wallet again
 just regtest-bdk sync
-# 25. Now synchronize sp-cli2 wallet usign RPC scanning
+# 25. Now synchronize sp-cli2 wallet using RPC scanning
 just regtest-sp scan-rpc
 # 26. Check bdk-cli wallet balance, should have 5000 sats more than last time we checked
 just regtest-bdk balance

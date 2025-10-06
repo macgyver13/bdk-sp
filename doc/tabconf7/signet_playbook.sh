@@ -41,7 +41,7 @@ signet-bdk sync
 
 ################# STAGE 4: finding silent payment outputs #####################
 
-# 16. Now synchronize sp-cli2 wallet usign compact block filter scanning
+# 19. Now synchronize sp-cli2 wallet using compact block filter scanning
 signet-sp scan-cbf "https://silentpayments.dev/blindbit/signet/"
 # 17. Check balance on sp-cli2 wallet
 signet-sp balance
@@ -82,7 +82,7 @@ SP_TXID=$(signet-cli sendrawtransaction $SP_TX | tr -d '\n')
 # 23. Wait for the next block
 # 24. Once the new transaction has been mined, synchronize bdk-cli wallet again
 signet-bdk sync
-# 25. Now synchronize sp-cli2 wallet usign compact block filter scanning
+# 28. Now synchronize sp-cli2 wallet using compact block filter scanning
 signet-sp scan-cbf "https://silentpayments.dev/blindbit/"
 # 26. Check bdk-cli wallet balance, should have 5000 sats more than last time we checked
 signet-bdk balance
