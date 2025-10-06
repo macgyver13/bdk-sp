@@ -2,60 +2,66 @@
 
 ########################### STAGE 1: setup ####################################
 
-# 1. Launch workshop environment.
+# 1. Ensure you have nix on your $PATH
+which nix || curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install --determinate
+# 2. Create a user local configuration directory for nix
+mkdir -p ~/.config/nix
+# 3. Once you have nix installed enable nix flakes
+echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
+# 4. Launch workshop environment.
 nix develop .
-# 2. Check bitcoind is running on regtest
+# 5. Check bitcoind is running on regtest
 regtest-cli getblockchaininfo
-# 3. Check bdk-cli wallet was created correctly
+# 6. Check bdk-cli wallet was created correctly
 regtest-bdk balance
-# 4. Check sp-cli wallet was created correctly
+# 7. Check sp-cli wallet was created correctly
 regtest-sp balance
-# 5. Synchronize bdk-cli wallet
+# 8. Synchronize bdk-cli wallet
 regtest-bdk sync
 
 ########################## STAGE 2: initial funding ###########################
 
-# 6. Get a new address from bdk-cli wallet
+# 9. Get a new address from bdk-cli wallet
 REGTEST_ADDRESS=$(regtest-bdk unused_address | jq -r '.address' | tr -d '\n')
-# 7. Mine a few more blocks to fund the wallet
+# 10. Mine a few more blocks to fund the wallet
 just mine 1 $REGTEST_ADDRESS
-# 8. Mine some of them to the internal wallet to confirm the bdk-cli balance
+# 11. Mine some of them to the internal wallet to confirm the bdk-cli balance
 just mine 101
-# 9. Synchronize bdk-cli wallet
+# 12. Synchronize bdk-cli wallet
 regtest-bdk sync
-# 10. Check balance
+# 13. Check balance
 regtest-bdk balance
 
 ################ STAGE 3: creating silent payment outputs #####################
 
-# 11. Get a silent payment code from sp-cli2 wallet
+# 14. Get a silent payment code from sp-cli2 wallet
 SP_CODE=$(regtest-sp code | jq -r '.silent_payment_code' | tr -d '\n')
-# 12. Create a transaction spending bdk-cli wallet UTXOs to a the previous silent payment code
+# 15. Create a transaction spending bdk-cli wallet UTXOs to a the previous silent payment code
 RAW_TX=$(regtest-bdk create_sp_tx --to-sp $SP_CODE:10000 --fee_rate 5 | jq -r '.raw_tx' | tr -d '\n')
 # Add a OP_RETURN if you want
 # OP_RETURN="Spending to silent payment UTXOs using BDK 🚀
 # RAW_TX=$(regtest-bdk create-sp-tx --to-sp $SP_CODE:10000 --fee 5 --add_string $OP_RETURN)
-# 13. Broadcast transaction using bdk-cli wallet
+# 16. Broadcast transaction using bdk-cli wallet
 TXID=$(regtest-bdk broadcast --tx $RAW_TX | jq -r '.txid' | tr -d '\n')
-# 14. Mine a new block
+# 17. Mine a new block
 just mine 1
-# 15. Once the new transaction has been mined, synchronize bdk-cli wallet again
+# 18. Once the new transaction has been mined, synchronize bdk-cli wallet again
 regtest-bdk sync
 
 ################# STAGE 4: finding silent payment outputs #####################
 
-# 16. Now synchronize sp-cli2 wallet using RPC
+# 19. Now synchronize sp-cli2 wallet using RPC
 regtest-sp scan-rpc
-# 17. Check balance on sp-cli2 wallet
+# 20. Check balance on sp-cli2 wallet
 regtest-sp balance
-# 18. Check balance on bdk-cli wallet
+# 21. Check balance on bdk-cli wallet
 regtest-bdk balance
 
 ################ STAGE 5: creating silent payment outputs #####################
 
-# 19. Get a new address from bdk-cli wallet
+# 22. Get a new address from bdk-cli wallet
 REGTEST_ADDRESS=$(regtest-bdk unused_address | jq -r '.address' | tr -d '\n')
-# 20. Create new transaction with sp-cli2 spending silent payment outputs
+# 23. Create new transaction with sp-cli2 spending silent payment outputs
 SP_TX=$(regtest-sp new-tx --to $REGTEST_ADDRESS:5000 --fee-rate 5 -- $(printf '%q' $(cat .regtest_tr_xprv)) | jq -r '.tx' | tr -d '\n')
 # Add a OP_RETURN if you want
 # OP_RETURN="Spending to silent payment UTXOs using BDK 🚀
@@ -67,7 +73,7 @@ SP_TX=$(regtest-sp new-tx --to $REGTEST_ADDRESS:5000 --fee-rate 5 -- $(printf '%
 # derived a silent payment output to receive the change back. That output is
 # derived from a labelled silent payment code with label 0, the default
 # specified by BIP 352 for change.
-# 21. Verify the change output has been correctly derived for $SP_TX
+# 24. Verify the change output has been correctly derived for $SP_TX
 DERIVATION_ORDER=0
 CHANGE_LABEL=0
 EXPECTED_CHANGE_SPK=$(regtest-sp derive-sp-for-tx $DERIVATION_ORDER --label $CHANGE_LABEL --tx-hex $SP_TX | jq -r '.script_pubkey_hex' | tr -d '\n')
@@ -80,16 +86,16 @@ fi
 
 ############## STAGE 7: spending silent payment outputs #######################
 
-# 22. Broadcast transaction
+# 25. Broadcast transaction
 SP_TXID=$(regtest-cli sendrawtransaction $SP_TX | tr -d '\n')
-# 23. Mine a new block
+# 26. Mine a new block
 just mine 1
-# 24. Once the new transaction has been mined, synchronize bdk-cli wallet again
+# 27. Once the new transaction has been mined, synchronize bdk-cli wallet again
 regtest-bdk sync
-# 25. Now synchronize sp-cli2 wallet using RPC scanning
+# 28. Now synchronize sp-cli2 wallet using RPC scanning
 regtest-sp scan-rpc
-# 26. Check bdk-cli wallet balance, should have 5000 sats more than last time we checked
+# 29. Check bdk-cli wallet balance, should have 5000 sats more than last time we checked
 regtest-bdk balance
-# 27. Check sp-cli2 wallet balance, should have >5000 sats less than last time we checked
+# 30. Check sp-cli2 wallet balance, should have >5000 sats less than last time we checked
 regtest-sp balance
-# 28. Congratulations 🍻 , you have performed your first sat-round trip using silent payments on top of BDK!
+# 31. Congratulations 🍻 , you have performed your first sat-round trip using silent payments on top of BDK!
