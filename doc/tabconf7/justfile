@@ -413,23 +413,23 @@ servedocs:
 docs:
   open https://thunderbiscuit.github.io/regtest-in-a-pod/
 
-[group("Default Wallet")]
+[group("Bitcoin Core")]
 [doc("Create a default wallet")]
 createwallet:
   just cli createwallet podmanwallet
   just cli -rpcwallet=podmanwallet settxfee 0.0001
 
-[group("Default Wallet")]
+[group("Bitcoin Core")]
 [doc("Print an address from the default wallet")]
 newaddress:
   just cli -rpcwallet=podmanwallet getnewaddress
 
-[group("Default Wallet")]
+[group("Bitcoin Core")]
 [doc("Print the balance of the default wallet")]
 walletbalance:
   just cli -rpcwallet=podmanwallet getbalance
 
-[group("Default Wallet")]
+[group("Bitcoin Core")]
 [doc("Send 1 bitcoin to <ADDRESS> using the default wallet")]
 sendto ADDRESS:
   just cli -rpcwallet=podmanwallet sendtoaddress {{ADDRESS}} 1
