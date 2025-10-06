@@ -75,7 +75,7 @@ DERIVATION_ORDER=0
 CHANGE_LABEL=0
 EXPECTED_CHANGE_SPK=$(signet-sp derive-sp-for-tx $DERIVATION_ORDER --label $CHANGE_LABEL --tx-hex $SP_TX | jq -r '.script_pubkey_hex' | tr -d '\n')
 TX_OUTPUT_SPKS=$(signet-cli decoderawtransaction $SP_TX | jq -r '.vout[].scriptPubKey.hex' | tr '\n' ' ' | tr -d '\n')
-if [[ $TX_OUTPUT_SPKS == *$EXPECTED_CHANGE_SPK* ]]; then
+if [[ -n "$EXPECTED_CHANGE_SPK" ]] && [[ $TX_OUTPUT_SPKS == *$EXPECTED_CHANGE_SPK* ]]; then
   echo "Change output matches!";
 else
   echo "Something went wrong...";
