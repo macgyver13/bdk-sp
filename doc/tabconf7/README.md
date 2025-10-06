@@ -1,29 +1,16 @@
 # TABConf7: Adding Silent Payments Support to BDK
 
-> Workshop prepared to showcase advances in the integration of silent payments into BDK
+> [!CAUTION]
+> This workshop has been prepared for educative purposes. Only runs on bitcoin signet or regtest. Do not try to run it on bitcoin mainnet.
 
-This workshop is prepared to run on Bitcoin Signet as well as Regtest.
+## Organization
 
-It is also packaged in three different formats depending on your local setup.
+> [!TIP]
+> Execute the `stage 1` of your preferred playbook before participating of the workshop. Installation of dependencies takes time and depends of connectivity.
 
-Each format has its own playbook, a shell script intended to be executed by copying commands from the file to the shell, but it can also be executed directly:
-- [`signet_playbook.sh`](./signet_playbook.sh)
-- [`regtest_playbook.sh`](./regtest_playbook.sh)
-- [`non_nix_playbook.sh`](./non_nix_playbook.sh)
+The workshop has been packaged in different playbooks depending on your local setup and level of expertise with shell tools.
 
-There is also [`auto_playbook.sh`](./auto_playbook.sh), based on [`non_nix_playbook.sh`](./non_nix_playbook.sh), directed for users not familiar with the shell, that also want to participate of the workshop. It only requires for you to execute it and press enter as instructed by the script itself.
-
-`signet_playbook.sh` as well as `regtest_playbook.sh` require you to have `nix` on your PATH. The easiest way of installing it on your system is by following:
-[https://determinate.systems/nix-installer/](https://determinate.systems/nix-installer/)
-
-`non_nix_playbook.sh`, as its name implies, does not use `nix`, so you will need to install the dependencies of the workshop yourself. [`auto_playbook.sh`](./auto_playbook.sh) users should also have these dependencies available, which are:
-- [Rust toolchain](https://rustup.rs/)
-- [just](https://just.systems/man/en/packages.html)
-- [podman](https://podman.io/docs/installation)
-
-Once you have the dependencies for the playbook installed, you are ready to follow the workshop.
-
-All playbooks have numbered steps grouped by stage. There are 6 stages in total:
+The presentation as well as the playbooks has been structured semantically by numbered stages. The same stage achieves the same outcome on each different playbook and in the presentation. There are 7 in total:
 
 1. **Setup**
 2. **Initial funding**
@@ -33,10 +20,73 @@ All playbooks have numbered steps grouped by stage. There are 6 stages in total:
 6. **Verifying a silent payment change output**
 7. **Spending silent payment outputs**
 
-If you're planning to follow the workshop live, note that network connections are not great in crowded places and installation steps may have a large dependency surface; execute `stage 1` prior to attending.
+Each stage is composed of multiple steps, all numbered, to ensure execution order.
+All seps are documented with an accompanying comment.
 
-If you have executed `stage 1` before participating in the workshop, but on-site you have network issues and can't connect properly to Bitcoin Signet, don't worry! Choose either `regtest_playbook.sh` or `non_nix_playbook.sh` (both run on regtest).
+> [!IMPORTANT]
+> If you are following this workshop live, do not execute the commands you see on the presentation blindly!
+> Follow the presentation through stages, but stick to the steps in the playbook of your choice.
 
-The presentation is divided into the same stages, but do not execute the commands from the presentation blindly! At each stage, listen to the details of the presentation, but stick to the steps in the playbook of your choice.
+## Playbooks
+
+> [!TIP]
+> Do not use `chmod +x script.sh && ./script.sh` to execute `signet_playbook.sh`, `regtest_playbook.sh` nor `non_nix_playbook.sh`. It will work, but is easier to debug during workshop if you execute each command separately.
+
+There are three intended to be executed by **copying commands** from the file to the shell:
+
+##### [`signet_playbook.sh`](./signet_playbook.sh)
+###### Requirements:
+- **nix**, the easiest way of installing it on your system is by following: [https://determinate.systems/nix-installer/](https://determinate.systems/nix-installer/).
+
+##### [`regtest_playbook.sh`](./regtest_playbook.sh)
+###### Requirements:
+- **nix**, the easiest way of installing it on your system is by following: [https://determinate.systems/nix-installer/](https://determinate.systems/nix-installer/).
+
+##### [`non_nix_playbook.sh`](./non_nix_playbook.sh)
+###### Requirements:
+- [podman](https://podman.io/docs/installation)
+- [rust toolchain](https://rustup.rs/)
+- [just](https://just.systems/man/en/packages.html)
+
+##### [`auto_playbook.sh`](./auto_playbook.sh)
+
+Based on [`non_nix_playbook.sh`](./non_nix_playbook.sh), directed for users not familiar with the shell, that also want to participate of the workshop.
+
+> [!NOTE]
+> This playbook is different to the previous ones.
+> It only requires you to execute it with `chmod +x auto_playbook.sh && ./auto_playbook.sh` and pressing enter as instructed by the script itself.
+
+###### Requirements:
+- [podman](https://podman.io/docs/installation)
+- [rust toolchain](https://rustup.rs/)
+- [just](https://just.systems/man/en/packages.html)
+
+Once you have the dependencies for the playbook installed, you are ready to follow the workshop.
 
 Happy workshop!
+
+## FAQ
+
+<details>
+
+<summary>How to choose what playbook to follow?</summary>
+
+First, try to install `nix` and execute `stage 1` of [`signet_playbook.sh`](./signet_playbook.sh). If [`nix`](https://determinate.systems/nix-installer/) is taking too long, you have issues due to your architecture or any other error you cannot figure out how to fix, try installing [`podman`](https://podman.io/docs/installation) with their indicated method for your machine, and proceed to execute `stage 1` of [`non_nix_playbook.sh`](./non_nix_playbook.sh). Please, fill an [issue](https://github.com/bitcoindevkit/bdk-sp/issues/new/choose) documenting the error on the repository to try to find a fix and improve this **FAQ**.
+
+</details>
+
+<details>
+
+<summary>On which network is the workshop running?</summary>
+
+If you choose [`signet_playbook.sh`](./signet_playbook.sh), you will be working with `signet`. If you choose [`regtest_playbook.sh`](./regtest_playbook.sh), [`non_nix_playbook.sh`](./non_nix_playbook.sh) or [`auto_playbook.sh`](./auto_playbook.sh) you will be working on `regtest`. There is no playbook for `testnet3`, `testnet4` nor `mainnet`.
+
+</details>
+
+<details>
+
+<summary>Signet is taking too long, what can I do?</summary>
+
+Choose any of the `regtest` playbooks working on your machine and follow the commands there.
+
+</details>
