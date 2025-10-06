@@ -2,7 +2,7 @@ set quiet
 
 bdk_data_dir := env('BDK_DATA_DIR', '.bdk')
 
-[doc("List all available commands.")]
+[doc("List all available commands")]
 default:
   just --list --unsorted
 
@@ -35,7 +35,7 @@ regtest-bdk COMMAND *ARGS:
   bdk-cli --datadir "{{bdk_data_dir}}" --network regtest wallet -w regtest -e "$EXT_DESCRIPTOR" -i "$INT_DESCRIPTOR" -c rpc -u http://localhost:18443/ $(just local_cookie_path) -d sqlite {{COMMAND}} {{ARGS}}
 
 [group("Podman")]
-[doc("Set up VM to run containers.")]
+[doc("Set up VM to run containers")]
 machine FORCE="false":
   #!/usr/bin/env bash
   machine_created=$(podman machine list --format json | jq -r 'map(.Name) | any(contains("sp_tabconf7"))')
@@ -51,7 +51,7 @@ machine FORCE="false":
   just startvm
 
 [group("Podman")]
-[doc("Build test node images.")]
+[doc("Build test node images")]
 build TAG="1.0.0" VERSION="29.0" RELEASE="29.0" ARCH="x86_64-linux-gnu": machine
   #!/usr/bin/env bash
   # Create virtual Containerfile by storing content in file descriptor 3
@@ -158,7 +158,7 @@ build TAG="1.0.0" VERSION="29.0" RELEASE="29.0" ARCH="x86_64-linux-gnu": machine
 
 
 [group("Podman")]
-[doc("Create container running test node in allocated VM.")]
+[doc("Create container running test node in allocated VM")]
 create FORCE="false" TAG="1.0.0" NAME="RegtestBitcoinEnv": (build TAG)
   #!/usr/bin/env bash
   container_exists=$(podman --connection sp_tabconf7 ps --all --format json | jq -r '.[] | select(.Names[] | contains("RegtestBitcoinEnv")) | .Id')
@@ -172,7 +172,7 @@ create FORCE="false" TAG="1.0.0" NAME="RegtestBitcoinEnv": (build TAG)
     podman --connection sp_tabconf7 create --name {{NAME}} --publish 18443:18443 --publish 18444:18444 --publish 3002:3002 --publish 3003:3003 --publish 3004:3004 --publish 60401:60401 localhost/regtest:{{TAG}}
 
 [group("Podman")]
-[doc("Start your podman machine.")]
+[doc("Start your podman machine")]
 startvm:
   #!/usr/bin/env bash
   machine_running=$(podman machine list --format json | jq -r '.[] | select(.Name | contains("sp_tabconf7")) | .Running')
@@ -183,7 +183,7 @@ startvm:
   fi
 
 [group("Podman")]
-[doc("Start your podman machine and regtest environment.")]
+[doc("Start your podman machine and regtest environment")]
 startcontainer: (create "false" "1.0.0")
   #!/usr/bin/env bash
   container_state=$(podman --connection sp_tabconf7 ps --format json | jq -r '.[] | select(.Names[] | contains("RegtestBitcoinEnv")) | .State')
@@ -202,7 +202,7 @@ _clean_regtest_sp:
   rm -rf ".sp_cli2_regtest.db"
 
 [group("Podman")]
-[doc("Stop your podman machine and running environment.")]
+[doc("Stop your podman machine and running environment")]
 stop:
   #!/usr/bin/env bash
   echo "Stopping container"
@@ -316,7 +316,7 @@ envpath:
   fi
 
 [group("Bitcoin Core")]
-[doc("Print the current session cookie to console.")]
+[doc("Print the current session cookie to console")]
 cookie:
   just podcmd "cat $(just envpath)/regtest/.cookie | cut -d ':' -f2"
 
@@ -328,7 +328,7 @@ local_cookie_path:
   echo ".regtest_cookie"
 
 [group("Bitcoin Core")]
-[doc("Mine a block, or mine <BLOCKS> number of blocks.")]
+[doc("Mine a block, or mine <BLOCKS> number of blocks")]
 mine BLOCKS="1" ADDRESS="bcrt1q6gau5mg4ceupfhtyywyaj5ge45vgptvawgg3aq":
   just cli generatetoaddress {{BLOCKS}} {{ADDRESS}}
   just _waitesplora
@@ -347,32 +347,32 @@ cli COMMAND *ARGS:
   bitcoin-cli --conf=/tmp/empty.conf -rpcconnect=127.0.0.1 -rpcport=18443 --chain=regtest --rpcuser=__cookie__ --rpcpassword=$(just cookie) {{COMMAND}} {{ARGS}}
 
 [group("Logs")]
-[doc("Print all logs to console.")]
+[doc("Print all logs to console")]
 logs:
   podman --connection sp_tabconf7 logs RegtestBitcoinEnv
 
 [group("Logs")]
-[doc("Print bitcoin daemon logs to console.")]
+[doc("Print bitcoin daemon logs to console")]
 bitcoindlogs:
   just podcmd "tail -f $(just envpath)/log/bitcoin.log"
 
 [group("Logs")]
-[doc("Print Esplora logs to console.")]
+[doc("Print Esplora logs to console")]
 esploralogs:
   just podcmd "tail -f $(just envpath)/log/esplora.log"
 
 [group("Logs")]
-[doc("Print block explorer logs to console.")]
+[doc("Print block explorer logs to console")]
 explorerlogs:
   just podcmd "tail -f $(just envpath)/log/fbbe.log"
 
 [group("Logs")]
-[doc("Print blindbit logs to console.")]
+[doc("Print blindbit logs to console")]
 blindbitlogs:
   just podcmd "tail -f $(just envpath)/log/blindbit.log"
 
 [group("Logs")]
-[doc("Print frigate logs to console.")]
+[doc("Print frigate logs to console")]
 frigatelogs:
   just podcmd "tail -f $(just envpath)/log/frigate.log"
 
@@ -382,12 +382,12 @@ _waitesplora:
   just podcmd "tail -n 2 --pid=\$\$ -f $(just envpath)/log/esplora.log | grep -m 1 -E 'DEBUG applying [0-9]+ new headers from height [0-9]+'" >/dev/null 2>&1
 
 [group("Podman")]
-[doc("Enter the shell in the pod.")]
+[doc("Enter the shell in the pod")]
 podshell:
   podman --connection sp_tabconf7 exec -it RegtestBitcoinEnv /bin/bash
 
 [group("Podman")]
-[doc("Execute command inside pod.")]
+[doc("Execute command inside pod")]
 [no-exit-message]
 podcmd *ARGS="":
   #!/usr/bin/env bash
@@ -399,38 +399,38 @@ podcmd *ARGS="":
   fi
 
 [group("Podman")]
-[doc("Open the block explorer.")]
+[doc("Open the block explorer")]
 explorer:
   open http://127.0.0.1:3003
 
 [group("Docs")]
-[doc("Serve the local docs.")]
+[doc("Serve the local docs")]
 servedocs:
   mkdocs serve
 
 [group("Docs")]
-[doc("Open the website for docs.")]
+[doc("Open the website for docs")]
 docs:
   open https://thunderbiscuit.github.io/regtest-in-a-pod/
 
 [group("Default Wallet")]
-[doc("Create a default wallet.")]
+[doc("Create a default wallet")]
 createwallet:
   just cli createwallet podmanwallet
   just cli -rpcwallet=podmanwallet settxfee 0.0001
 
 [group("Default Wallet")]
-[doc("Print an address from the default wallet.")]
+[doc("Print an address from the default wallet")]
 newaddress:
   just cli -rpcwallet=podmanwallet getnewaddress
 
 [group("Default Wallet")]
-[doc("Print the balance of the default wallet.")]
+[doc("Print the balance of the default wallet")]
 walletbalance:
   just cli -rpcwallet=podmanwallet getbalance
 
 [group("Default Wallet")]
-[doc("Send 1 bitcoin to <ADDRESS> using the default wallet.")]
+[doc("Send 1 bitcoin to <ADDRESS> using the default wallet")]
 sendto ADDRESS:
   just cli -rpcwallet=podmanwallet sendtoaddress {{ADDRESS}} 1
 
