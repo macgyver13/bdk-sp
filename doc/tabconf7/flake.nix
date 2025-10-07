@@ -78,7 +78,7 @@
             export BDK_DATA_DIR="$PWD/.bdk"
             mkdir -p "$BDK_DATA_DIR"
 
-            bitcoind -signet -datadir=$BITCOIN_DATA_DIR -daemonwait -txindex
+            bitcoind -signet -datadir=$BITCOIN_DATA_DIR -daemonwait -txindex -blockfilterindex -peerblockfilters
 
             export EXTRA_SCRIPTS="$PWD/.bin"
             mkdir -p $EXTRA_SCRIPTS
@@ -152,6 +152,7 @@ EOF
             export TR_XPRV=$(cat ".tr_xprv")
             export EXT_DESCRIPTOR=$(cat "$BDK_DATA_DIR/.external_descriptor")
             export INT_DESCRIPTOR=$(cat "$BDK_DATA_DIR/.internal_descriptor")
+            export EXTRA_PEER=$(bitcoin-cli --datadir=$BITCOIN_DATA_DIR --chain=signet getpeerinfo | jq -r 'map(select(.servicesnames[] | contains ("COMPACT"))) | .[0].addr' | cut -d ":" -f1)
 
             trap "bitcoin-cli --datadir=$BITCOIN_DATA_DIR --chain=signet stop && just stop" EXIT
           '';

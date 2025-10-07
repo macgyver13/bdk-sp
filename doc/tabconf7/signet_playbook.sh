@@ -48,7 +48,7 @@ signet-bdk sync
 ################# STAGE 4: finding silent payment outputs #####################
 
 # 19. Now synchronize sp-cli2 wallet using compact block filter scanning
-signet-sp scan-cbf "https://silentpayments.dev/blindbit/signet/"
+signet-sp scan-cbf "https://silentpayments.dev/blindbit/signet/" --extra-peer $EXTRA_PEER
 # 20. Check balance on sp-cli2 wallet
 signet-sp balance
 # 21. Check balance on bdk-cli wallet
