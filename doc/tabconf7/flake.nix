@@ -4,7 +4,7 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
-    sp-cli2.url = "github:nymius/bdk-sp/feat/nix-env";
+    sp-cli2.url = "github:nymius/bdk-sp/docs/workshops";
     bdk-cli.url = "github:nymius/bdk-cli/feat/nix-env";
   };
   outputs = {
