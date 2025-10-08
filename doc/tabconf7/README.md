@@ -13,12 +13,12 @@ The workshop has been packaged in different playbooks depending on your local se
 The presentation as well as the playbooks has been structured semantically by numbered stages. The same stage achieves the same outcome on each different playbook and in the presentation. There are 7 in total:
 
 1. **Setup**
-2. **Initial funding**
-3. **Creating silent payment outputs**
-4. **Finding silent payment outputs**
-5. **Funding a transaction with a silent payment output**
-6. **Verifying a silent payment change output**
-7. **Spending silent payment outputs**
+2. **Fund bdk-cli wallet**
+3. **Creat a silent payment output**
+4. **Find a silent payment output**
+5. **Fund a transaction with a silent payment output**
+6. **Verify a silent payment change output**
+7. **Spend a silent payment output**
 
 Each stage is composed of multiple steps, all numbered, to ensure execution order.
 All seps are documented with an accompanying comment.
