@@ -19,7 +19,7 @@ signet-sp balance
 # 8. Synchronize bdk-cli wallet
 signet-bdk sync
 
-########################## STAGE 2: initial funding ###########################
+###################### STAGE 2: fund bdk-cli wallet ###########################
 
 # 9. Get a new address from bdk-cli wallet
 SIGNET_ADDRESS=$(signet-bdk unused_address | jq -r '.address')
@@ -30,7 +30,7 @@ echo $SIGNET_ADDRESS | tr -d '\n' | qrencode -d 90 -t utf8 -o -
 # 13. Once the new transaction has been mined, synchronize bdk-cli wallet again
 signet-bdk sync
 
-################ STAGE 3: creating silent payment outputs #####################
+################ STAGE 3: create a silent payment output ######################
 
 # 14. Get a silent payment code from sp-cli2 wallet
 SP_CODE=$(signet-sp code | jq -r '.silent_payment_code' | tr -d '\n')
@@ -45,7 +45,7 @@ TXID=$(signet-bdk broadcast --tx $RAW_TX | jq -r '.txid' | tr -d '\n')
 # 18. Once the new transaction has been mined, synchronize bdk-cli wallet again
 signet-bdk sync
 
-################# STAGE 4: finding silent payment outputs #####################
+################## STAGE 4: find a silent payment output ######################
 
 # 19. Now synchronize sp-cli2 wallet using compact block filter scanning
 signet-sp scan-cbf "https://silentpayments.dev/blindbit/signet/" --extra-peer $EXTRA_PEER
@@ -54,7 +54,7 @@ signet-sp balance
 # 21. Check balance on bdk-cli wallet
 signet-bdk balance
 
-################ STAGE 5: creating silent payment outputs #####################
+########## STAGE 5: fund a transaction with a silent payment output ###########
 
 # 22. Get a new address from bdk-cli wallet
 SIGNET_ADDRESS=$(signet-bdk unused_address | jq -r '.address' | tr -d '\n')
@@ -64,7 +64,7 @@ SP_TX=$(signet-sp new-tx --to $SIGNET_ADDRESS:4300 --fee-rate 3 -- $TR_XPRV | jq
 # OP_RETURN="Spending to silent payment UTXOs using BDK 🚀
 # SP_TX=$(signet-sp new-tx --to $SIGNET_ADDRESS:5000 --data $OP_RETURN --fee_rate 5 | jq -r '.tx' | tr -d '\n')
 
-########### STAGE 6: verifying a silent payment change output #################
+############ STAGE 6: verify a silent payment change output ###################
 
 # This transaction as it is created by a silent payment wallet should have
 # derived a silent payment output to receive the change back. That output is
@@ -81,7 +81,7 @@ else
   echo "Something went wrong...";
 fi
 
-############## STAGE 7: spending silent payment outputs #######################
+################# STAGE 7: spend a silent payment output ######################
 
 # 25. Broadcast transaction
 SP_TXID=$(signet-cli sendrawtransaction $SP_TX | tr -d '\n')

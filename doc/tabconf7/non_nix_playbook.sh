@@ -13,7 +13,7 @@ just regtest-sp balance
 # 5. Synchronize bdk-cli wallet
 just regtest-bdk sync
 
-########################## STAGE 2: initial funding ###########################
+###################### STAGE 2: fund bdk-cli wallet ###########################
 
 # 6. Get a new address from bdk-cli wallet
 REGTEST_ADDRESS=$(just regtest-bdk unused_address | jq -r '.address' | tr -d '\n')
@@ -26,7 +26,7 @@ just regtest-bdk sync
 # 10. Check balance
 just regtest-bdk balance
 
-################ STAGE 3: creating silent payment outputs #####################
+################ STAGE 3: create a silent payment output ######################
 
 # 11. Get a silent payment code from sp-cli2 wallet
 SP_CODE=$(just regtest-sp code | jq -r '.silent_payment_code' | tr -d '\n')
@@ -42,7 +42,7 @@ just mine 1
 # 15. Once the new transaction has been mined, synchronize bdk-cli wallet again
 just regtest-bdk sync
 
-################# STAGE 4: finding silent payment outputs #####################
+################## STAGE 4: find a silent payment output ######################
 
 # 16. Now synchronize sp-cli2 wallet using RPC
 just regtest-sp scan-rpc
@@ -51,7 +51,7 @@ just regtest-sp balance
 # 18. Check balance on bdk-cli wallet
 just regtest-bdk balance
 
-######## STAGE 5: funding a transaction with a silent payment output ##########
+########## STAGE 5: fund a transaction with a silent payment output ###########
 
 # 19. Get a new address from bdk-cli wallet
 REGTEST_ADDRESS=$(just regtest-bdk unused_address | jq -r '.address' | tr -d '\n')
@@ -61,7 +61,7 @@ SP_TX=$(just regtest-sp new-tx --to $REGTEST_ADDRESS:5000 --fee-rate 5 -- $(prin
 # OP_RETURN="Spending to silent payment UTXOs using BDK 🚀
 # SP_TX=$(just regtest-sp new-tx --to $REGTEST_ADDRESS:5000 --data $OP_RETURN --fee_rate 5 | jq -r '.tx' | tr -d '\n')
 
-########### STAGE 6: verifying a silent payment change output #################
+############ STAGE 6: verify a silent payment change output ###################
 
 # This transaction as it is created by a silent payment wallet should have
 # derived a silent payment output to receive the change back. That output is
@@ -78,7 +78,7 @@ else
   echo "Something went wrong...";
 fi
 
-############## STAGE 7: spending silent payment outputs #######################
+################# STAGE 7: spend a silent payment output ######################
 
 # 22. Broadcast transaction
 SP_TXID=$(just cli sendrawtransaction $SP_TX | tr -d '\n')

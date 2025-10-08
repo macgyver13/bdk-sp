@@ -19,7 +19,7 @@ regtest-sp balance
 # 8. Synchronize bdk-cli wallet
 regtest-bdk sync
 
-########################## STAGE 2: initial funding ###########################
+###################### STAGE 2: fund bdk-cli wallet ###########################
 
 # 9. Get a new address from bdk-cli wallet
 REGTEST_ADDRESS=$(regtest-bdk unused_address | jq -r '.address' | tr -d '\n')
@@ -32,7 +32,7 @@ regtest-bdk sync
 # 13. Check balance
 regtest-bdk balance
 
-################ STAGE 3: creating silent payment outputs #####################
+################ STAGE 3: create a silent payment output ######################
 
 # 14. Get a silent payment code from sp-cli2 wallet
 SP_CODE=$(regtest-sp code | jq -r '.silent_payment_code' | tr -d '\n')
@@ -48,7 +48,7 @@ just mine 1
 # 18. Once the new transaction has been mined, synchronize bdk-cli wallet again
 regtest-bdk sync
 
-################# STAGE 4: finding silent payment outputs #####################
+################## STAGE 4: find a silent payment output ######################
 
 # 19. Now synchronize sp-cli2 wallet using RPC
 regtest-sp scan-rpc
@@ -57,7 +57,7 @@ regtest-sp balance
 # 21. Check balance on bdk-cli wallet
 regtest-bdk balance
 
-################ STAGE 5: creating silent payment outputs #####################
+########## STAGE 5: fund a transaction with a silent payment output ###########
 
 # 22. Get a new address from bdk-cli wallet
 REGTEST_ADDRESS=$(regtest-bdk unused_address | jq -r '.address' | tr -d '\n')
@@ -67,7 +67,7 @@ SP_TX=$(regtest-sp new-tx --to $REGTEST_ADDRESS:5000 --fee-rate 5 -- $(printf '%
 # OP_RETURN="Spending to silent payment UTXOs using BDK 🚀
 # SP_TX=$(regtest-sp new-tx --to $REGTEST_ADDRESS:5000 --data $OP_RETURN --fee_rate 5 | jq -r '.tx' | tr -d '\n')
 
-########### STAGE 6: verifying a silent payment change output #################
+############ STAGE 6: verify a silent payment change output ###################
 
 # This transaction as it is created by a silent payment wallet should have
 # derived a silent payment output to receive the change back. That output is
@@ -84,7 +84,7 @@ else
   echo "Something went wrong...";
 fi
 
-############## STAGE 7: spending silent payment outputs #######################
+################# STAGE 7: spend a silent payment output ######################
 
 # 25. Broadcast transaction
 SP_TXID=$(regtest-cli sendrawtransaction $SP_TX | tr -d '\n')
