@@ -32,7 +32,7 @@ just regtest-bdk balance
 SP_CODE=$(just regtest-sp code | jq -r '.silent_payment_code' | tr -d '\n')
 # 12. Create a transaction spending bdk-cli wallet UTXOs to a the previous silent payment code
 RAW_TX=$(just regtest-bdk create_sp_tx --to-sp $SP_CODE:10000 --fee_rate 5 | jq -r '.raw_tx' | tr -d '\n')
-# Add a OP_RETURN if you want
+# Add an OP_RETURN if you want
 # OP_RETURN="Spending to silent payment UTXOs using BDK 🚀
 # RAW_TX=$(just regtest-bdk create-sp-tx --to-sp $SP_CODE:10000 --fee 5 --add_string $OP_RETURN)
 # 13. Broadcast transaction using bdk-cli wallet
