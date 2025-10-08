@@ -157,8 +157,7 @@ EOF
             trap "bitcoin-cli --datadir=$BITCOIN_DATA_DIR --chain=signet stop && just stop" EXIT
 
             if [[ -z "''${EXTRA_PEER}" ]]; then
-              echo "No compact block filter peers found. Retry later"
-              exit
+              echo "No compact block filter peers found. Ask for one."
             else
               echo "Compact block filter peer available: $EXTRA_PEER";
             fi
