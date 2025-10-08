@@ -78,7 +78,7 @@
             export BDK_DATA_DIR="$PWD/.bdk"
             mkdir -p "$BDK_DATA_DIR"
 
-            bitcoind -signet -datadir=$BITCOIN_DATA_DIR -daemonwait -txindex -blockfilterindex -peerblockfilters
+            bitcoind -daemonwait -signet -datadir=$BITCOIN_DATA_DIR -daemonwait -txindex -blockfilterindex -peerblockfilters
 
             export EXTRA_SCRIPTS="$PWD/.bin"
             mkdir -p $EXTRA_SCRIPTS
