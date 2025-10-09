@@ -38,14 +38,14 @@ regtest-bdk COMMAND *ARGS:
 [doc("Set up VM to run containers")]
 machine FORCE="false":
   #!/usr/bin/env bash
-  machine_created=$(podman machine list --format json | jq -r 'map(.Name) | any(contains("sp_tabconf7"))')
+  machine_created=$(podman machine list --format json | jq -r 'map(.Name) | any(contains("sptabconf7"))')
   if [ "$machine_created" = "true" ] && [ "{{FORCE}}" = "true" ]; then
     echo "Machine already created, removing forcefully"
-    podman machine rm -f sp_tabconf7
+    podman machine rm -f sptabconf7
   elif [ "$machine_created" = "true" ]; then
     echo "Machine already created."
   else
-    podman machine init --cpus 4 --memory 4096 --disk-size 20 sp_tabconf7
+    podman machine init --cpus 4 --memory 4096 --disk-size 20 sptabconf7
   fi
 
   just startvm
@@ -148,12 +148,12 @@ build TAG="1.0.0" VERSION="29.0" RELEASE="29.0" ARCH="x86_64-linux-gnu": machine
     ENTRYPOINT ["tail", "-f", "/dev/null"]
   EOF
 
-  image_exists=$(podman --connection sp_tabconf7 images --noheading -f reference=localhost/regtest:1.0.0 --format 'table \{\{.ID\}\}')
+  image_exists=$(podman --connection sptabconf7 images --noheading -f reference=localhost/regtest:1.0.0 --format 'table \{\{.ID\}\}')
   if [[ $image_exists ]]; then
     echo "Image already built."
     exit
   else
-    cat <&3 | podman --connection sp_tabconf7 build --build-arg BITCOIN_VERSION={{VERSION}} --build-arg RELEASE={{RELEASE}} --build-arg TARGET_ARCH={{ARCH}} --tag localhost/regtest:{{TAG}} -f -
+    cat <&3 | podman --connection sptabconf7 build --build-arg BITCOIN_VERSION={{VERSION}} --build-arg RELEASE={{RELEASE}} --build-arg TARGET_ARCH={{ARCH}} --tag localhost/regtest:{{TAG}} -f -
   fi
 
 
@@ -161,23 +161,23 @@ build TAG="1.0.0" VERSION="29.0" RELEASE="29.0" ARCH="x86_64-linux-gnu": machine
 [doc("Create container running test node in allocated VM")]
 create FORCE="false" TAG="1.0.0" NAME="RegtestBitcoinEnv": (build TAG)
   #!/usr/bin/env bash
-  container_exists=$(podman --connection sp_tabconf7 ps --all --format json | jq -r '.[] | select(.Names[] | contains("RegtestBitcoinEnv")) | .Id')
+  container_exists=$(podman --connection sptabconf7 ps --all --format json | jq -r '.[] | select(.Names[] | contains("RegtestBitcoinEnv")) | .Id')
   if [[ $container_exists ]] && [ "{{FORCE}}" = "false" ]; then
     echo "Container already exists."
     exit
   elif [[ $container_exists ]] && [ "{{FORCE}}" = "true" ]; then
-    podman --connection sp_tabconf7 rm -f $container_exists
+    podman --connection sptabconf7 rm -f $container_exists
   fi
 
-    podman --connection sp_tabconf7 create --name {{NAME}} --publish 18443:18443 --publish 18444:18444 --publish 3002:3002 --publish 3003:3003 --publish 3004:3004 --publish 60401:60401 localhost/regtest:{{TAG}}
+    podman --connection sptabconf7 create --name {{NAME}} --publish 18443:18443 --publish 18444:18444 --publish 3002:3002 --publish 3003:3003 --publish 3004:3004 --publish 60401:60401 localhost/regtest:{{TAG}}
 
 [group("Podman")]
 [doc("Start your podman machine")]
 startvm:
   #!/usr/bin/env bash
-  machine_running=$(podman machine list --format json | jq -r '.[] | select(.Name | contains("sp_tabconf7")) | .Running')
+  machine_running=$(podman machine list --format json | jq -r '.[] | select(.Name | contains("sptabconf7")) | .Running')
   if [ "$machine_running" = "false" ]; then
-    podman machine start sp_tabconf7 | tail -n1
+    podman machine start sptabconf7 | tail -n1
   else
     echo "Machine is already running."
   fi
@@ -186,12 +186,12 @@ startvm:
 [doc("Start your podman machine and regtest environment")]
 startcontainer: (create "false" "1.0.0")
   #!/usr/bin/env bash
-  container_state=$(podman --connection sp_tabconf7 ps --format json | jq -r '.[] | select(.Names[] | contains("RegtestBitcoinEnv")) | .State')
+  container_state=$(podman --connection sptabconf7 ps --format json | jq -r '.[] | select(.Names[] | contains("RegtestBitcoinEnv")) | .State')
   if [ "$container_state" = "running" ]; then
     echo "Container is running"
     exit
   fi
-  podman --connection sp_tabconf7 start RegtestBitcoinEnv
+  podman --connection sptabconf7 start RegtestBitcoinEnv
 
 _clean_regtest_bdk:
   rm -rf {{bdk_data_dir}}/regtest
@@ -207,13 +207,13 @@ stop:
   #!/usr/bin/env bash
   echo "Stopping container"
 
-  machine_running=$(podman machine list --format json | jq -r '.[] | select(.Name | contains("sp_tabconf7")) | .Running')
+  machine_running=$(podman machine list --format json | jq -r '.[] | select(.Name | contains("sptabconf7")) | .Running')
   if [ "$machine_running" = "false" ]; then
     echo "Machine is not running."
     exit
   fi
 
-  container_state=$(podman --connection sp_tabconf7 ps --format json | jq -r '.[] | select(.Names[] | contains("RegtestBitcoinEnv")) | .State')
+  container_state=$(podman --connection sptabconf7 ps --format json | jq -r '.[] | select(.Names[] | contains("RegtestBitcoinEnv")) | .State')
   if [ "$container_state" != "running" ]; then
     echo "Container is not running"
   else
@@ -223,10 +223,10 @@ stop:
       just _clean_regtest_sp
       just _clean_regtest_bdk
     fi
-    podman --connection sp_tabconf7 stop RegtestBitcoinEnv
+    podman --connection sptabconf7 stop RegtestBitcoinEnv
   fi
 
-  podman machine stop sp_tabconf7
+  podman machine stop sptabconf7
 
 [group("Podman")]
 [doc("Launch ephemeral environment")]
@@ -267,7 +267,7 @@ start STATE="persistent":
 
   # Create Blindbit oracle config
   just podcmd "mkdir -p $BLINDBIT_DIR"
-  podman --connection sp_tabconf7 exec -i RegtestBitcoinEnv /bin/bash -c "cat > $BLINDBIT_DIR/blindbit.toml" <<- EOF
+  podman --connection sptabconf7 exec -i RegtestBitcoinEnv /bin/bash -c "cat > $BLINDBIT_DIR/blindbit.toml" <<- EOF
     # access from container host
     host = "0.0.0.0:3004"
     chain = "regtest"
@@ -287,7 +287,7 @@ start STATE="persistent":
   just podcmd "blindbit --datadir $BLINDBIT_DIR >> $BLINDBIT_LOG 2>&1 &"
 
   just podcmd "mkdir -p $FRIGATE_DIR/regtest"
-  podman --connection sp_tabconf7 exec -i RegtestBitcoinEnv /bin/bash -c "cat > $FRIGATE_DIR/regtest/config" <<- EOF
+  podman --connection sptabconf7 exec -i RegtestBitcoinEnv /bin/bash -c "cat > $FRIGATE_DIR/regtest/config" <<- EOF
     {
       "coreServer": "http://127.0.0.1:18443",
       "coreAuthType": "COOKIE",
@@ -349,7 +349,7 @@ cli COMMAND *ARGS:
 [group("Logs")]
 [doc("Print all logs to console")]
 logs:
-  podman --connection sp_tabconf7 logs RegtestBitcoinEnv
+  podman --connection sptabconf7 logs RegtestBitcoinEnv
 
 [group("Logs")]
 [doc("Print bitcoin daemon logs to console")]
@@ -384,7 +384,7 @@ _waitesplora:
 [group("Podman")]
 [doc("Enter the shell in the pod")]
 podshell:
-  podman --connection sp_tabconf7 exec -it RegtestBitcoinEnv /bin/bash
+  podman --connection sptabconf7 exec -it RegtestBitcoinEnv /bin/bash
 
 [group("Podman")]
 [doc("Execute command inside pod")]
@@ -395,7 +395,7 @@ podcmd *ARGS="":
   if [ "$containers_running" = "false" ]; then
     echo "Container is not running"
   else
-    podman --connection sp_tabconf7 exec RegtestBitcoinEnv /bin/bash -c '{{ARGS}}'
+    podman --connection sptabconf7 exec RegtestBitcoinEnv /bin/bash -c '{{ARGS}}'
   fi
 
 [group("Podman")]
@@ -460,4 +460,3 @@ _local_install:
   which podman || echo "Install podman following the instructions: https://podman.io/docs/installation"
   cargo install --git https://github.com/nymius/bdk-cli bdk-cli --branch feat/nix-env --all-features
   cargo install --git https://github.com/nymius/bdk-sp bdk_sp_cli_v2 --branch feat/nix-env --all-features
-
