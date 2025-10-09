@@ -180,19 +180,14 @@
         "rust-overlay": "rust-overlay_2"
       },
       "locked": {
-        "lastModified": 1759843532,
-        "narHash": "sha256-ZzWJmiARzg0xdP3gB9AowkKJfEQWhHK/vYfb9rFBww8=",
-        "owner": "nymius",
-        "repo": "bdk-sp",
-        "rev": "150404a34291c2f9317ce5c589bd096cfc0abb77",
-        "type": "github"
+        "path": "../..",
+        "type": "path"
       },
       "original": {
-        "owner": "nymius",
-        "ref": "docs/workshops",
-        "repo": "bdk-sp",
-        "type": "github"
-      }
+        "path": "../..",
+        "type": "path"
+      },
+      "parent": []
     },
     "systems": {
       "locked": {
