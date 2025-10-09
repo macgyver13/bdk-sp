@@ -148,7 +148,7 @@ build TAG="1.0.0" VERSION="29.0" RELEASE="29.0": machine
     ENTRYPOINT ["tail", "-f", "/dev/null"]
   EOF
 
-  image_exists=$(podman --connection sptabconf7 images --noheading -f reference=localhost/regtest:1.0.0 --format 'table \{\{.ID\}\}')
+  image_exists=$(podman --connection sptabconf7 images --noheading -f reference=docker.io/nymius/sptabconf7:1.0.0 -f reference=localhost/regtest:1.0.0 --format 'table \{\{.ID\}\}')
 
   os=$(podman info --format json | jq -r '.host.os')
   arch=$(podman info --format json | jq -r '.host.arch')
@@ -159,6 +159,21 @@ build TAG="1.0.0" VERSION="29.0" RELEASE="29.0": machine
   esac)
   target_arch="$aarch-linux-gnu" # podman setups a linux VM for us
   platform="linux/$aarch"
+
+  pulled_blobs=$(podman --connection sptabconf7 pull --platform $platform docker://docker.io/nymius/sptabconf7:1.0.0 2>&1)
+
+  if [ $? -ne 0 ]; then
+    echo "Image not found on registry"
+  fi
+
+  echo $pulled_blobs | rg -q "WARNING"
+
+  if [ $? -eq 0 ]; then
+    echo "Pulled image doesn't match host architecture"
+  else
+    echo "Pulled image ready to use"
+    exit
+  fi
 
   if [[ $image_exists ]]; then
     echo "Image already built."
@@ -180,7 +195,16 @@ create FORCE="false" TAG="1.0.0" NAME="RegtestBitcoinEnv": (build TAG)
     podman --connection sptabconf7 rm -f $container_exists
   fi
 
+  local_build=$(podman --connection sptabconf7 images --noheading -f reference=localhost/regtest:1.0.0 --format 'table \{\{.ID\}\}' | head -n 1)
+  external_pull=$(podman --connection sptabconf7 images --noheading -f reference=docker.io/nymius/sptabconf7:1.0.0 --format 'table \{\{.ID\}\}' | head -n 1)
+
+  if [[ $local_build ]]; then
+    echo "Creating from local build"
     podman --connection sptabconf7 create --name {{NAME}} --publish 18443:18443 --publish 18444:18444 --publish 3002:3002 --publish 3003:3003 --publish 3004:3004 --publish 60401:60401 localhost/regtest:{{TAG}}
+  elif [[ $external_pull ]]; then
+    echo "Creating from external pull"
+    podman --connection sptabconf7 create --name {{NAME}} --publish 18443:18443 --publish 18444:18444 --publish 3002:3002 --publish 3003:3003 --publish 3004:3004 --publish 60401:60401 docker.io/nymius/sptabconf7:{{TAG}}
+  fi
 
 [group("Podman")]
 [doc("Start your podman machine")]
