@@ -45,7 +45,7 @@ machine FORCE="false":
   elif [ "$machine_created" = "true" ]; then
     echo "Machine already created."
   else
-    podman machine init --cpus 4 --memory 4096 --disk-size 20 sptabconf7
+    podman machine init --cpus 4 --memory 4096 --disk-size 30 sptabconf7
   fi
 
   just startvm
