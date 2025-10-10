@@ -16,7 +16,6 @@ non_nix_init: _local_install init
 
 [group("Silent payment wallet")]
 [doc("Send a command to sp-cli2 on regtest")]
-[positional-arguments]
 regtest-sp COMMAND *ARGS:
   #!/usr/bin/env bash
   export DB_PATH=".sp_cli2_regtest.db"
@@ -27,7 +26,6 @@ regtest-sp COMMAND *ARGS:
 
 [group("BDK wallet")]
 [doc("Send a command to bdk-cli on regtest")]
-[positional-arguments]
 regtest-bdk COMMAND *ARGS:
   #!/usr/bin/env bash
   export EXT_DESCRIPTOR=$(cat "{{bdk_data_dir}}/.external_descriptor")
@@ -375,7 +373,6 @@ sendminingrewardto ADDRESS:
 
 [group("Bitcoin Core")]
 [doc("Send a command to bitcoin-cli")]
-[positional-arguments]
 cli COMMAND *ARGS:
   #!/usr/bin/env bash
   touch /tmp/empty.conf
