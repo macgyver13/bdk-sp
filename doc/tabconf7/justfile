@@ -164,7 +164,7 @@ build TAG="1.0.0" VERSION="29.0" RELEASE="29.0": machine
     echo "Image not found on registry"
   fi
 
-  echo $pulled_blobs | rg -q "WARNING"
+  echo $pulled_blobs | tee /dev/stderr | rg -q "WARNING"
 
   if [ $? -eq 0 ]; then
     echo "Pulled image doesn't match host architecture"
