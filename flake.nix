@@ -37,6 +37,8 @@
               pname = "sp-cli2";
               version = "0.1.0";
 
+            # Disable cargo-auditable which doesn't support edition 2024
+            auditable = false;
             src = ./.;
             cargoLock = {
               lockFile = ./Cargo.lock;
