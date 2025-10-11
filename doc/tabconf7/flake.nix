@@ -54,21 +54,24 @@
         formatter = pkgs.alejandra;
 
         devShells.default = pkgs.mkShell {
-          packages = with pkgs; [
-            jq
-            podman
-            virtiofsd
-            qrencode
-            qrscan
-            xclip
-            rust-script
-            just
-            python311Packages.weasyprint
-            presenterm
-            bitcoind
-            bdk-cli.packages.${system}.bdk-cli
-            sp-cli2.packages.${system}.sp-cli2
-          ];
+          packages = with pkgs;
+            [
+              jq
+              podman
+              qrencode
+              xclip
+              rust-script
+              just
+              python311Packages.weasyprint
+              presenterm
+              bitcoind
+              bdk-cli.packages.${system}.bdk-cli
+              sp-cli2.packages.${system}.sp-cli2
+            ]
+            ++ lib.optionals (system != "aarch64-darwin") [
+              virtiofsd
+              qrscan
+            ];
           shellHook = ''
                         export PS1="$ "
 
