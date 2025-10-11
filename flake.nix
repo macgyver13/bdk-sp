@@ -28,9 +28,14 @@
         formatter = pkgs.alejandra;
 
         packages = {
-          sp-cli2 = pkgs.rustPlatform.buildRustPackage {
-            pname = "sp-cli2";
-            version = "0.1.0";
+          sp-cli2 =
+            (pkgs.makeRustPlatform {
+              cargo = rustVersion;
+              rustc = rustVersion;
+            })
+            .buildRustPackage {
+              pname = "sp-cli2";
+              version = "0.1.0";
 
             src = ./.;
             cargoLock = {
