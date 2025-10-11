@@ -2,7 +2,7 @@
   description = "BDK Silent Payments Workshop Environment";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
     flake-utils.url = "github:numtide/flake-utils";
     sp-cli2.url = "../..";
     bdk-cli.url = "github:nymius/bdk-cli/feat/nix-env";
