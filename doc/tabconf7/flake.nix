@@ -54,29 +54,33 @@
             homepage = "https://bitcoincore.org/";
           };
         };
+        workshopEnv = pkgs.buildEnv {
+          name = "bdk-sp-workshop-env";
+          paths = with pkgs;
+            [
+              jq
+              podman
+              qrencode
+              xclip
+              rust-script
+              just
+              python311Packages.weasyprint
+              presenterm
+              bitcoind
+              bdk-cli.packages.${system}.bdk-cli
+              sp-cli2.packages.${system}.sp-cli2
+            ]
+            ++ lib.optionals (system != "aarch64-darwin") [
+              virtiofsd
+              qrscan
+            ];
+        };
       in {
         formatter = pkgs.alejandra;
 
         devShells = {
           debug = pkgs.mkShell {
-            packages = with pkgs;
-              [
-                jq
-                podman
-                qrencode
-                xclip
-                rust-script
-                just
-                python311Packages.weasyprint
-                presenterm
-                bitcoind
-                bdk-cli.packages.${system}.bdk-cli
-                sp-cli2.packages.${system}.sp-cli2
-              ]
-              ++ lib.optionals (system != "aarch64-darwin") [
-                virtiofsd
-                qrscan
-              ];
+            packages = [workshopEnv];
             shellHook = ''
               export PS1="$ "
               export EXTRA_SCRIPTS="$PWD/.bin"
@@ -93,24 +97,7 @@
             '';
           };
           workshop = pkgs.mkShell {
-            packages = with pkgs;
-              [
-                jq
-                podman
-                qrencode
-                xclip
-                rust-script
-                just
-                python311Packages.weasyprint
-                presenterm
-                bitcoind
-                bdk-cli.packages.${system}.bdk-cli
-                sp-cli2.packages.${system}.sp-cli2
-              ]
-              ++ lib.optionals (system != "aarch64-darwin") [
-                virtiofsd
-                qrscan
-              ];
+            packages = [workshopEnv];
             shellHook = ''
                           export PS1="$ "
 
