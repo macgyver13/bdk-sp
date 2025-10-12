@@ -158,7 +158,7 @@ build TAG="1.0.0" VERSION="29.0" RELEASE="29.0": machine
   target_arch="$aarch-linux-gnu" # podman setups a linux VM for us
   platform="linux/$aarch"
 
-  pulled_blobs=$(podman --connection sptabconf7 pull --platform $platform docker://docker.io/nymius/sptabconf7:1.0.0 2>&1)
+  pulled_blobs=$(podman --connection sptabconf7 pull --platform $platform docker://docker.io/nymius/sptabconf7:$arch-1.0.0 2>&1)
 
   if [ $? -ne 0 ]; then
     echo "Image not found on registry"
@@ -193,15 +193,17 @@ create FORCE="false" TAG="1.0.0" NAME="RegtestBitcoinEnv": (build TAG)
     podman --connection sptabconf7 rm -f $container_exists
   fi
 
-  local_build=$(podman --connection sptabconf7 images --noheading -f reference=localhost/regtest:1.0.0 --format 'table \{\{.ID\}\}' | head -n 1)
-  external_pull=$(podman --connection sptabconf7 images --noheading -f reference=docker.io/nymius/sptabconf7:1.0.0 --format 'table \{\{.ID\}\}' | head -n 1)
+  arch=$(podman info --format json | jq -r '.host.arch')
+
+  local_build=$(podman --connection sptabconf7 images --noheading -f reference=localhost/regtest:{{TAG}} --format 'table \{\{.ID\}\}' | head -n 1)
+  external_pull=$(podman --connection sptabconf7 images --noheading -f reference=docker.io/nymius/sptabconf7:$arch-{{TAG}} --format 'table \{\{.ID\}\}' | head -n 1)
 
   if [[ $local_build ]]; then
     echo "Creating from local build"
     podman --connection sptabconf7 create --name {{NAME}} --publish 18443:18443 --publish 18444:18444 --publish 3002:3002 --publish 3003:3003 --publish 3004:3004 --publish 60401:60401 localhost/regtest:{{TAG}}
   elif [[ $external_pull ]]; then
     echo "Creating from external pull"
-    podman --connection sptabconf7 create --name {{NAME}} --publish 18443:18443 --publish 18444:18444 --publish 3002:3002 --publish 3003:3003 --publish 3004:3004 --publish 60401:60401 docker.io/nymius/sptabconf7:{{TAG}}
+    podman --connection sptabconf7 create --name {{NAME}} --publish 18443:18443 --publish 18444:18444 --publish 3002:3002 --publish 3003:3003 --publish 3004:3004 --publish 60401:60401 docker.io/nymius/sptabconf7:$arch-{{TAG}}
   fi
 
 [group("Podman")]
