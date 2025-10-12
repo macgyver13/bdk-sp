@@ -78,6 +78,11 @@
       in {
         formatter = pkgs.alejandra;
 
+        packages = {
+          default = workshopEnv;
+          workshop-env = workshopEnv;
+        };
+
         devShells = {
           debug = pkgs.mkShell {
             packages = [workshopEnv];
