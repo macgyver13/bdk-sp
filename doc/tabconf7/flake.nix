@@ -7,6 +7,10 @@
     sp-cli2.url = "../..";
     bdk-cli.url = "github:nymius/bdk-cli/feat/nix-env";
   };
+  nixConfig = {
+    extra-substituters = ["https://sptabconf7.cachix.org"];
+    extra-trusted-public-keys = ["sptabconf7.cachix.org-1:ulR9Y3dF4M6zKXnRRT4+r1Yp52EBMk6yVPKEp1EmdJk="];
+  };
   outputs = {
     self,
     nixpkgs,
