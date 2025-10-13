@@ -4,7 +4,7 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
     flake-utils.url = "github:numtide/flake-utils";
-    sp-cli2.url = "../..";
+    sp-cli2.url = "github:nymius/bdk-sp/docs/workshops";
     bdk-cli.url = "github:nymius/bdk-cli/feat/nix-env";
   };
   nixConfig = {
@@ -37,10 +37,7 @@
             }.tar.gz";
             sha256 =
               if pkgs.stdenv.isDarwin
-              then
-                if pkgs.stdenv.isAarch64
-                then "sha256-jvA498EVtaSB4ccC86n90BKWng0k3Q9wb0j60VWDdxc="
-                else "sha256-NEMcWCoDmd1C4Sdth9JTBsvd4CF/Z0S9VaKUWYZkXdo="
+              then "sha256-NEMcWCoDmd1C4Sdth9JTBsvd4CF/Z0S9VaKUWYZkXdo="
               else "sha256-poHk9s5STDOKEF8hRhNgW6xsM9WMMdxRNbvAK8RYu2w=";
           };
 

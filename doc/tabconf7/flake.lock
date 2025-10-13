@@ -109,16 +109,16 @@
     },
     "nixpkgs_3": {
       "locked": {
-        "lastModified": 1756787288,
-        "narHash": "sha256-rw/PHa1cqiePdBxhF66V7R+WAP8WekQ0mCDG4CFqT8Y=",
+        "lastModified": 1735563628,
+        "narHash": "sha256-OnSAY7XDSx7CtDoqNh8jwVwh4xNL/2HaJxGjryLWzX8=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "d0fc30899600b9b3466ddb260fd83deb486c32f1",
+        "rev": "b134951a4c9f3c995fd7be05f3243f8ecd65d798",
         "type": "github"
       },
       "original": {
         "owner": "NixOS",
-        "ref": "nixos-unstable",
+        "ref": "nixos-24.05",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -180,14 +180,19 @@
         "rust-overlay": "rust-overlay_2"
       },
       "locked": {
-        "path": "../..",
-        "type": "path"
+        "lastModified": 1760303889,
+        "narHash": "sha256-2A5kBUyHRVBCMzC5Jy/h1Y6pbm8W/13w3PJ7anhhZ/M=",
+        "owner": "nymius",
+        "repo": "bdk-sp",
+        "rev": "6d64bff522586fab1ac97b364f8957b11d52259e",
+        "type": "github"
       },
       "original": {
-        "path": "../..",
-        "type": "path"
-      },
-      "parent": []
+        "owner": "nymius",
+        "ref": "docs/workshops",
+        "repo": "bdk-sp",
+        "type": "github"
+      }
     },
     "systems": {
       "locked": {
